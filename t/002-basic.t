@@ -5,6 +5,7 @@ use warnings;
 
 use mop;
 
+use Try::Tiny;
 use Plack;
 use Plack::Request;
 
@@ -18,15 +19,6 @@ class PlackObservableNumberStream extends React::Observable {
 
     has $!size                 = die "Must specify a size for the number stream";
     has $!producer is ro, lazy = $_->build_producer;
-    has $!subscription;
-
-    method init_subscription ($watcher) {
-        $!subscription = React::AnyEvent::Subscription::Watcher->new(
-            watcher => $watcher
-        );
-    }
-
-    method unsubscribe { $!subscription->unsubscribe }
 
     method build_producer {
         my $size = $!size;
@@ -44,9 +36,28 @@ class PlackObservableNumberStream extends React::Observable {
                     }
                 }
             );
-            $self->init_subscription( $w );
+            $self->_init_subscription( $w );
         }
     }
+
+    # FIXME:
+    # we have to keep track of our own subscription here
+    # because otherwise the subscription goes out of scope
+    # in the Plack response and the watcher gets reaped.
+    # the other option was to make the Observer handle it
+    # but that really didn't seem right at all. Perhaps
+    # in a more sophisticated application there will be a
+    # more obvious answer as to where to manage the
+    # subscription.
+    # - SL
+
+    has $!subscription;
+
+    submethod _init_subscription ($w) {
+        $!subscription = React::AnyEvent::Subscription::Watcher->new( watcher => $w );
+    }
+
+    submethod unsubscribe { $!subscription->unsubscribe }
 }
 
 class PlackStreamingObserver with React::Core::Observer {
@@ -75,12 +86,14 @@ sub {
     warn "This app needs a server that supports psgi.streaming"
         unless $r->env->{'psgi.streaming'};
 
-    my $o = PlackObservableNumberStream->new( size => $r->param('size') || 10 );
+    my $o = PlackObservableNumberStream->new( size => $r->param('size') // 10 );
 
     return sub {
-        my $respond = shift;
-        my $writer  = $respond->([ 200, [ 'Content-Type' => 'text/plain' ]]);
-        $o->subscribe( PlackStreamingObserver->new( writer => $writer ) );
+        $o->subscribe(
+            PlackStreamingObserver->new(
+                writer => $_[0]->([ 200, [ 'Content-Type' => 'text/plain' ]])
+            )
+        );
     };
 }
 
