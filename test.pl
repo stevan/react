@@ -7,18 +7,9 @@ use AnyEvent;
 
 use React::Observable;
 use React::Observer::Debug;
+use React::AnyEvent::Subscription::Watcher;
 
 use mop;
-
-class Subscription::AnyEventWatcher with React::Core::Subscription {
-    has $!w;
-
-    method unsubscribe { undef $!w }
-}
-
-## ------------------------------------
-## Test body
-## ------------------------------------
 
 my $cv = AnyEvent->condvar;
 
@@ -31,7 +22,7 @@ my $o = React::Observable->new(
             interval => 0.5,
             cb       => sub { $observer->on_next( $x++ ) }
         );
-        Subscription::AnyEventWatcher->new( w => $w );
+        React::AnyEvent::Subscription::Watcher->new( watcher => $w );
     }
 );
 
@@ -61,7 +52,5 @@ my $w2 = AnyEvent->timer(after => 15, cb => sub {
 
 $cv->recv;
 
-
 1;
-
 
