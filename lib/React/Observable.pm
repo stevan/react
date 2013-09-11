@@ -9,10 +9,10 @@ use React::Core;
 
 class Observable with React::Core::Observable {
 
-    has $!producer;
+    has $!producer is ro;
 
     method subscribe ($observer) {
-        $!producer->( $observer );
+        $self->producer->( $observer );
     }
 
     method take ( $n ) { use_module('React::Observable::Take')->new( sequence => $self, n => $n ) }
