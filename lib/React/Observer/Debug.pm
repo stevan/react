@@ -24,10 +24,6 @@ class Debug with React::Core::Observer {
     method on_next ($value) {
         warn $!name . " GOT VALUE: $value\n";
     }
-
-    submethod DEMOLISH {
-        warn '>>>' . $!name . " stopped subscribing\n";
-    }
 }
 
 __END__
