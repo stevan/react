@@ -32,6 +32,7 @@ class Observer with React::Core::Observer {
     method on_completed  { $!observer->on_completed() }
     method on_error ($e) { $!observer->on_error( $e ) }
     method on_next  ($v) {
+        local $_ = $v;
         $!observer->on_next( $!f->( $v ) )
     }
 }
