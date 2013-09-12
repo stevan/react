@@ -1,7 +1,9 @@
-package React::AnyEvent::Subscription;
+package React::Xt::AnyEvent::Subscription;
 use v5.16;
 use warnings;
 use mop;
+
+use React::Core;
 
 class Watcher with React::Core::Subscription {
     has $!watcher;

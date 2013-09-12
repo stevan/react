@@ -9,9 +9,9 @@ use Try::Tiny;
 use Plack;
 use Plack::Request;
 
-use React::Observable;
-use React::Observer::Debug;
-use React::AnyEvent::Subscription::Watcher;
+use React;
+use React::Xt::AnyEvent::Subscription::Watcher;
+use React::Xt::Plack::Observer::Streaming;
 
 use AnyEvent;
 
@@ -54,30 +54,10 @@ class PlackObservableNumberStream extends React::Observable {
     has $!subscription;
 
     submethod _init_subscription ($w) {
-        $!subscription = React::AnyEvent::Subscription::Watcher->new( watcher => $w );
+        $!subscription = React::Xt::AnyEvent::Subscription::Watcher->new( watcher => $w );
     }
 
     submethod unsubscribe { $!subscription->unsubscribe }
-}
-
-class PlackStreamingObserver with React::Core::Observer {
-    has $!writer;
-
-    method on_next ($val) {
-        warn "on_next $val";
-        $!writer->write( "$val\n" );
-    }
-
-    method on_completed {
-        warn "on_completed";
-        $!writer->close;
-    }
-
-    method on_error ($e) {
-        warn "on_error $e";
-        $!writer->write("Got an error: $e\n");
-        $!writer->close;
-    }
 }
 
 sub {
@@ -89,23 +69,11 @@ sub {
     my $o = PlackObservableNumberStream->new( size => $r->param('size') // 10 );
 
     return sub {
-        $o->subscribe(
-            PlackStreamingObserver->new(
+        $o->map(sub { $_ . "\n" })->subscribe(
+            React::Xt::Plack::Observer::Streaming->new(
                 writer => $_[0]->([ 200, [ 'Content-Type' => 'text/plain' ]])
             )
         );
     };
 }
-
-
-
-
-
-
-
-
-
-
-
-
 

@@ -7,7 +7,7 @@ use mop;
 
 use Data::Dumper;
 
-use React::Observable;
+use React;
 use React::Observer::Debug;
 use React::Subscription::Empty;
 
@@ -29,7 +29,7 @@ my $o = React::Observable->new(
 );
 
 my $sub = $o->map(sub {
-    Dumper( $_[0] )
+    Dumper( $_ )
 })->subscribe( React::Observer::Debug->new( name => 'filesys-notify' ) );
 
 EV::loop;
