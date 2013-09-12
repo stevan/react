@@ -7,7 +7,7 @@ use React::Core;
 
 class Debug with React::Core::Observer {
 
-    has $!name;
+    has $!name is ro;
 
     submethod BUILD {
         warn '>>>' . $!name . " started subscribing\n";
