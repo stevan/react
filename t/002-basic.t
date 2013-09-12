@@ -10,8 +10,8 @@ use Plack;
 use Plack::Request;
 
 use React;
-use React::Xt::AnyEvent::Subscription::Watcher;
-use React::Xt::Plack::Observer::Streaming;
+use ReactX::AnyEvent::Subscription::Watcher;
+use ReactX::Plack::Observer::Streaming;
 
 use AnyEvent;
 
@@ -54,7 +54,7 @@ class PlackObservableNumberStream extends React::Observable {
     has $!subscription;
 
     submethod _init_subscription ($w) {
-        $!subscription = React::Xt::AnyEvent::Subscription::Watcher->new( watcher => $w );
+        $!subscription = ReactX::AnyEvent::Subscription::Watcher->new( watcher => $w );
     }
 
     submethod unsubscribe { $!subscription->unsubscribe }
@@ -69,10 +69,9 @@ sub {
     my $o = PlackObservableNumberStream->new( size => $r->param('size') // 10 );
 
     return sub {
+        my $w = $_[0]->([ 200, [ 'Content-Type' => 'text/plain' ]]);
         $o->map(sub { $_ . "\n" })->subscribe(
-            React::Xt::Plack::Observer::Streaming->new(
-                writer => $_[0]->([ 200, [ 'Content-Type' => 'text/plain' ]])
-            )
+            ReactX::Plack::Observer::Streaming->new( writer => $w )
         );
     };
 }

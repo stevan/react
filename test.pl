@@ -7,7 +7,7 @@ use AnyEvent;
 
 use React::Observable;
 use React::Observer::Debug;
-use React::Xt::AnyEvent::Subscription::Watcher;
+use ReactX::AnyEvent::Subscription::Watcher;
 
 use mop;
 
@@ -22,7 +22,7 @@ my $o = React::Observable->new(
             interval => 0.5,
             cb       => sub { $observer->on_next( $x++ ) }
         );
-        React::Xt::AnyEvent::Subscription::Watcher->new( watcher => $w );
+        ReactX::AnyEvent::Subscription::Watcher->new( watcher => $w );
     }
 );
 

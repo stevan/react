@@ -1,4 +1,4 @@
-package React::Xt::Plack::Observer;
+package ReactX::Plack::Observer;
 use v5.16;
 use warnings;
 use mop;

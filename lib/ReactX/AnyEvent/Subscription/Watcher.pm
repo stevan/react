@@ -1,4 +1,4 @@
-package React::Xt::AnyEvent::Subscription;
+package ReactX::AnyEvent::Subscription;
 use v5.16;
 use warnings;
 use mop;
