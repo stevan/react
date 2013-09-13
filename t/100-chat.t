@@ -5,21 +5,30 @@ use warnings;
 
 use mop;
 
+use AnyEvent;
+
 use Plack;
 use Plack::Builder;
 use Plack::Request;
 
 use React;
-use ReactX::AnyEvent::Subject::BlockingPublisher;
+use React::Subject::Publisher;
 use ReactX::Plack::Observer::Streaming;
 
-my $p = ReactX::AnyEvent::Subject::BlockingPublisher->new;
+my $p = React::Subject::Publisher->new;
+
+# NOTE:
+# this is kinda silly, but
+# AnyEvent really wants me
+# to do it.
+# - SL
+AnyEvent->condvar->begin;
 
 builder {
     mount '/talk' => sub {
         my $r = Plack::Request->new( shift );
         $p->on_next( $r->param('message') );
-        [ 200, [ 'Content-Type' => 'text/plain' ], [ 'thank you for your message' ]];
+        [ 200, [ 'Content-Type' => 'text/plain' ], [ "thank you for your message\n" ]];
     };
 
     mount '/listen' => sub {
