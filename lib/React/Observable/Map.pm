@@ -6,11 +6,12 @@ use mop;
 use React::Observer::Simple;
 
 class Map extends React::Observable {
-    has $!sequence is ro;
-    has $!f        is ro;
+    has $!sequence is ro = die '$!sequence is required';
+    has $!f        is ro = die '$!f is required';
 
     method new (%args) {
         $self = $class->next::method(
+            %args,
             producer => sub {
                 my $observer = shift;
                 $self->sequence->subscribe(
@@ -23,8 +24,7 @@ class Map extends React::Observable {
                         },
                     )
                 )
-            },
-            %args
+            }
         );
     }
 }

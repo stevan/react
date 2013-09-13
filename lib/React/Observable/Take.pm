@@ -7,11 +7,12 @@ use React::Observer::Simple;
 use React::Subscription::Wrapper;
 
 class Take extends React::Observable {
-    has $!sequence is ro;
-    has $!n        is ro;
+    has $!sequence is ro = die '$!sequence is required';;
+    has $!n        is ro = die '$!n is required';;
 
     method new (%args) {
         $self = $class->next::method(
+            %args,
             producer => sub {
                 my $observer = shift;
                 my $counter  = 0;
@@ -34,8 +35,7 @@ class Take extends React::Observable {
                     },
                 );
                 $take_subscription->wrap( $self->sequence->subscribe( $take_observer ) );
-            },
-            %args
+            }
         );
     }
 }
