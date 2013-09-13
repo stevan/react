@@ -3,35 +3,29 @@ use v5.16;
 use warnings;
 use mop;
 
+use React::Observer::Simple;
+
 class Map extends React::Observable {
+    has $!sequence is ro;
+    has $!f        is ro;
 
-    has $!sequence;
-    has $!f;
-
-    method subscribe ($observer) {
-        $!sequence->subscribe(
-            React::Observable::Map::Observer->new(
-                observer => $observer,
-                f        => $!f
-            )
-        )
-    }
-}
-
-package React::Observable::Map;
-use v5.16;
-use warnings;
-use mop;
-
-class Observer with React::Observer {
-    has $!observer;
-    has $!f;
-
-    method on_completed  { $!observer->on_completed() }
-    method on_error ($e) { $!observer->on_error( $e ) }
-    method on_next  ($v) {
-        local $_ = $v;
-        $!observer->on_next( $!f->( $v ) )
+    method new (%args) {
+        $self = $class->next::method(
+            producer => sub {
+                my $observer = shift;
+                $self->sequence->subscribe(
+                    React::Observer::Simple->new(
+                        on_completed => sub { $observer->on_completed      },
+                        on_error     => sub { $observer->on_error( $_[0] ) },
+                        on_next      => sub {
+                            local $_ = $_[0];
+                            $observer->on_next( $self->f->( $_[0] ) )
+                        },
+                    )
+                )
+            },
+            %args
+        );
     }
 }
 

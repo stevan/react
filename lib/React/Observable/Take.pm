@@ -3,58 +3,40 @@ use v5.16;
 use warnings;
 use mop;
 
+use React::Observer::Simple;
+use React::Subscription::Wrapper;
+
 class Take extends React::Observable {
-    has $!sequence;
-    has $!n;
-    has $!subscription;
+    has $!sequence is ro;
+    has $!n        is ro;
 
-    method subscribe ($observer) {
-        $!subscription = $!sequence->subscribe(
-            React::Observable::Take::Observer->new(
-                observer => $observer,
-                num      => $!n,
-                parent   => $self
-            )
-        )
-    }
+    method new (%args) {
+        $self = $class->next::method(
+            producer => sub {
+                my $observer = shift;
+                my $counter  = 0;
 
-    method unsubscribe {
-        $!subscription->unsubscribe;
-    }
-}
-
-package React::Observable::Take;
-use v5.16;
-use warnings;
-use mop;
-
-class Observer with React::Observer {
-    has $!parent;
-    has $!observer;
-    has $!counter = 0;
-    has $!num;
-
-    method on_error ($e) {
-        $!observer->on_error( $e )
-            if $!counter < $!num;
-    }
-
-    method on_completed {
-        $!observer->on_completed()
-            if $!counter < $!num;
-    }
-
-    method on_next ($v) {
-        $!counter++;
-        if ( $!counter <= $!num ) {
-            $!observer->on_next( $v );
-            if ( $!counter == $!num ) {
-                $!observer->on_completed;
-            }
-        }
-        if ( $!counter >= $!num ) {
-            $!parent->unsubscribe;
-        }
+                my $take_subscription = React::Subscription::Wrapper->new;
+                my $take_observer     = React::Observer::Simple->new(
+                    on_completed => sub { $observer->on_completed      if $counter < $self->n },
+                    on_error     => sub { $observer->on_error( $_[0] ) if $counter < $self->n },
+                    on_next      => sub {
+                        $counter++;
+                        if ( $counter <= $self->n ) {
+                            $observer->on_next( $_[0] );
+                            if ( $counter == $self->n ) {
+                                $observer->on_completed;
+                            }
+                        }
+                        if ( $counter >= $self->n ) {
+                            $take_subscription->unsubscribe;
+                        }
+                    },
+                );
+                $take_subscription->wrap( $self->sequence->subscribe( $take_observer ) );
+            },
+            %args
+        );
     }
 }
 
