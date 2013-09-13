@@ -2,7 +2,6 @@
 
 use strict;
 use warnings;
-use mop;
 
 use AnyEvent;
 
