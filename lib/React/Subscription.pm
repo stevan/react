@@ -1,10 +1,11 @@
 package React;
 use v5.16;
 use warnings;
+use mop;
 
-use React::Observable;
-
-1;
+role Subscription {
+    method unsubscribe;
+}
 
 __END__
 

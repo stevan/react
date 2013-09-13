@@ -3,13 +3,11 @@ use v5.16;
 use warnings;
 use mop;
 
-use React::Core;
-
-class Streaming with React::Core::Observer {
+class Streaming with React::Observer {
     has $!writer;
     has $!error_msg = "Error: %s";
 
-    method on_next ($val) { $!writer->write( $val ) }
+    method on_next ($val) { $!writer->write( $val ); }
 
     method on_completed { $!writer->close }
 

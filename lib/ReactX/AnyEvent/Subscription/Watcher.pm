@@ -3,9 +3,7 @@ use v5.16;
 use warnings;
 use mop;
 
-use React::Core;
-
-class Watcher with React::Core::Subscription {
+class Watcher with React::Subscription {
     has $!watcher;
 
     method unsubscribe { undef $!watcher }

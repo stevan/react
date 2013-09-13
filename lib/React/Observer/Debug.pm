@@ -3,9 +3,7 @@ use v5.16;
 use warnings;
 use mop;
 
-use React::Core;
-
-class Debug with React::Core::Observer {
+class Debug with React::Observer {
 
     has $!name is ro;
 

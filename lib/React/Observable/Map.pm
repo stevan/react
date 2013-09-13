@@ -23,9 +23,7 @@ use v5.16;
 use warnings;
 use mop;
 
-use React::Core;
-
-class Observer with React::Core::Observer {
+class Observer with React::Observer {
     has $!observer;
     has $!f;
 

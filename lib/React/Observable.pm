@@ -5,9 +5,7 @@ use mop;
 
 use Module::Runtime qw[ use_module ];
 
-use React::Core;
-
-class Observable with React::Core::Observable {
+class Observable {
 
     has $!producer is ro;
 

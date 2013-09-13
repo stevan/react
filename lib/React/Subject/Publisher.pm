@@ -3,7 +3,6 @@ use v5.16;
 use warnings;
 use mop;
 
-use React::Subject;
 use React::Subscription::Callback;
 
 class Publisher extends React::Subject {

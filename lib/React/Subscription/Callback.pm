@@ -3,9 +3,7 @@ use v5.16;
 use warnings;
 use mop;
 
-use React::Core;
-
-class Callback with React::Core::Subscription {
+class Callback with React::Subscription {
     has $!cb;
 
     method unsubscribe { $!cb->() }

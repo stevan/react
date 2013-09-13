@@ -3,9 +3,7 @@ use v5.16;
 use warnings;
 use mop;
 
-use React::Core;
-
-class Empty with React::Core::Subscription {
+class Empty with React::Subscription {
     method unsubscribe {}
 }
 
