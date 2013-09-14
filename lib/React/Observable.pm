@@ -23,6 +23,7 @@ class Observable {
 
     method take ( $n ) { use_module('React::Observable::Take')->new( sequence => $self, n => $n ) }
     method map  ( $f ) { use_module('React::Observable::Map' )->new( sequence => $self, f => $f ) }
+    method grep ( $f ) { use_module('React::Observable::Grep')->new( sequence => $self, f => $f ) }
 }
 
 __END__
