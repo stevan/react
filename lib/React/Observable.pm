@@ -10,7 +10,9 @@ use React::Subscription::Empty;
 
 class Observable {
 
-    has $!producer = $_->build_producer;
+    has $!producer is lazy = $_->build_producer;
+
+    submethod BUILD { $!producer } # force the lazy
 
     submethod build_producer { die '$!producer is required' }
 
