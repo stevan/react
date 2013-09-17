@@ -10,10 +10,12 @@ use React::Subscription::Empty;
 
 class Observable {
 
-    has $!producer is ro = die '$!producer is required';
+    has $!producer = $_->build_producer;
+
+    submethod build_producer { die '$!producer is required' }
 
     method subscribe ($observer) {
-        my $subscription = $self->producer->( $observer );
+        my $subscription = $!producer->( $observer );
         return $subscription
             if blessed $subscription
             && $subscription->can('does')

@@ -6,26 +6,23 @@ use mop;
 use React::Observer::Simple;
 
 class Map extends React::Observable {
-    has $!sequence is ro = die '$!sequence is required';
-    has $!f        is ro = die '$!f is required';
+    has $!sequence = die '$!sequence is required';
+    has $!f        = die '$!f is required';
 
-    method new (%args) {
-        $self = $class->next::method(
-            %args,
-            producer => sub {
-                my $observer = shift;
-                $self->sequence->subscribe(
-                    React::Observer::Simple->new(
-                        on_completed => sub { $observer->on_completed      },
-                        on_error     => sub { $observer->on_error( $_[0] ) },
-                        on_next      => sub {
-                            local $_ = $_[0];
-                            $observer->on_next( $self->f->( $_[0] ) )
-                        },
-                    )
+    submethod build_producer {
+        return sub {
+            my $observer = shift;
+            $!sequence->subscribe(
+                React::Observer::Simple->new(
+                    on_completed => sub { $observer->on_completed      },
+                    on_error     => sub { $observer->on_error( $_[0] ) },
+                    on_next      => sub {
+                        local $_ = $_[0];
+                        $observer->on_next( $!f->( $_[0] ) )
+                    },
                 )
-            }
-        );
+            )
+        }
     }
 }
 

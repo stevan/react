@@ -6,22 +6,20 @@ use mop;
 use React::Subscription::Callback;
 
 class Publisher extends React::Subject {
-    has $!_observer_subcription_map is ro = {};
+    has $!_observer_subcription_map = {};
 
-    method new {
-        $self = $class->next::method(
-            producer => sub {
-                my $observer = shift;
+    submethod build_producer {
+        return sub {
+            my $observer = shift;
 
-                my $subscription;
-                $subscription = React::Subscription::Callback->new( cb => sub {
-                    (delete $self->_observer_subcription_map->{ $subscription })->on_completed
-                });
+            my $subscription;
+            $subscription = React::Subscription::Callback->new( cb => sub {
+                (delete $!_observer_subcription_map->{ $subscription })->on_completed
+            });
 
-                $self->_observer_subcription_map->{ $subscription } = $observer;
-                $subscription;
-            }
-        );
+            $!_observer_subcription_map->{ $subscription } = $observer;
+            $subscription;
+        }
     }
 
     method on_completed {
