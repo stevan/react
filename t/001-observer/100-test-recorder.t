@@ -9,7 +9,7 @@ use Test::More;
 use React;
 use Test::React::Observer::Recorder;
 
-ok(mop::get_meta('React::Observer')->isa('mop::role'), '... Observer is a role');
+ok(mop::meta('React::Observer')->isa('mop::role'), '... Observer is a role');
 
 my $o = Test::React::Observer::Recorder->new;
 ok($o->does('React::Observer'), '... the object does React::Observer role');

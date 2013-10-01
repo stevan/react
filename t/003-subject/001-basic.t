@@ -8,7 +8,7 @@ use Test::More;
 
 use React;
 
-my $meta = mop::get_meta('React::Subject');
+my $meta = mop::meta('React::Subject');
 ok($meta->isa('mop::class'), '... React::Subject is a class');
 ok($meta->is_abstract, '... React::Subject is an abstract class');
 is($meta->superclass, 'React::Observable', '... React::Subject is a subclass of React::Observable');
