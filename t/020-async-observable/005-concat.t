@@ -58,29 +58,32 @@ isa_ok($o2, 'React::Observable');
 
 my $c = $o1->concat( $o2 );
 
-my $r = Test::React::Observer::Recorder->new;
-ok($r->does('React::Observer'), '... this object does React::Observer');
+my $r1 = Test::React::Observer::Recorder->new;
+ok($r1->does('React::Observer'), '... this object does React::Observer');
 
-my $s = $c->subscribe( $r );
-ok($s->does('React::Subscription'), '... this object does React::Subscription');
+my $s1 = $c->subscribe( $r1 );
+ok($s1->does('React::Subscription'), '... this object does React::Subscription');
 
-diag "pause for a moment ...";
+diag "pause for approx. 2.2 seconds ...";
 
 my ($s2, $r2);
 
-my $w1 = AnyEvent->timer(after => 2.5, cb => sub {
-    #use Data::Dumper; warn Dumper( $r->values );
-    is_deeply( $r->values, [ 0 .. 20 ], '... got the expected values');
-    ok($r->is_completed, '... and we have been completed');
+my $w1 = AnyEvent->timer(after => 2.2, cb => sub {
+    is_deeply( $r1->values, [ 0 .. 20 ], '... got the expected values');
+    ok($r1->is_completed, '... and we have been completed');
+
+    $s1->unsubscribe;
 
     $r2 = Test::React::Observer::Recorder->new;
-    $s2 = $c->subscribe( $r2 );
+    ok($r2->does('React::Observer'), '... this object does React::Observer');
 
-    diag "pause again for a moment ...";
+    $s2 = $c->subscribe( $r2 );
+    ok($s2->does('React::Subscription'), '... this object does React::Subscription');
+
+    diag "pause again for another 2.2 seconds ...";
 });
 
-my $w2 = AnyEvent->timer(after => 5, cb => sub {
-    #use Data::Dumper; warn Dumper( $r2->values );
+my $w2 = AnyEvent->timer(after => 4.4, cb => sub {
     is_deeply( $r2->values, [ 0 .. 20 ], '... got the expected values');
     ok($r2->is_completed, '... and we have been completed');
     $s2->unsubscribe;
