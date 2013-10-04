@@ -43,9 +43,9 @@ ok($r->does('React::Observer'), '... this object does React::Observer');
 my $s = $t->subscribe( $r );
 ok($s->does('React::Subscription'), '... this object does React::Subscription');
 
-diag "pause for approx. 1 second ...";
+diag "pause for approx. 2 seconds ...";
 
-my $w = AnyEvent->timer(after => 1.1, cb => sub {
+my $w = AnyEvent->timer(after => 2, cb => sub {
     is_deeply( $r->values, [ 0 .. 4 ], '... got the expected values');
     ok($r->is_completed, '... and we have been completed');
     $s->unsubscribe;

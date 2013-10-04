@@ -64,11 +64,11 @@ ok($r1->does('React::Observer'), '... this object does React::Observer');
 my $s1 = $c->subscribe( $r1 );
 ok($s1->does('React::Subscription'), '... this object does React::Subscription');
 
-diag "pause for approx. 2.2 seconds ...";
+diag "pause for approx. 3 seconds ...";
 
 my ($s2, $r2);
 
-my $w1 = AnyEvent->timer(after => 2.2, cb => sub {
+my $w1 = AnyEvent->timer(after => 3, cb => sub {
     is_deeply( $r1->values, [ 0 .. 20 ], '... got the expected values');
     ok($r1->is_completed, '... and we have been completed');
 
@@ -80,10 +80,10 @@ my $w1 = AnyEvent->timer(after => 2.2, cb => sub {
     $s2 = $c->subscribe( $r2 );
     ok($s2->does('React::Subscription'), '... this object does React::Subscription');
 
-    diag "pause again for another 2.2 seconds ...";
+    diag "pause again for another 3 seconds ...";
 });
 
-my $w2 = AnyEvent->timer(after => 4.4, cb => sub {
+my $w2 = AnyEvent->timer(after => 6, cb => sub {
     is_deeply( $r2->values, [ 0 .. 20 ], '... got the expected values');
     ok($r2->is_completed, '... and we have been completed');
     $s2->unsubscribe;
