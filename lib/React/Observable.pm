@@ -12,9 +12,9 @@ class Observable {
 
     has $!producer is lazy = $_->build_producer;
 
-    submethod BUILD { $!producer } # force the lazy
+    method BUILD { $!producer } # force the lazy
 
-    submethod build_producer { die '$!producer is required' }
+    method build_producer { die '$!producer is required' }
 
     method subscribe ($observer) {
         my $subscription = $!producer->( $observer );

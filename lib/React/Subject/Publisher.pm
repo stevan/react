@@ -8,7 +8,7 @@ use React::Subscription::Callback;
 class Publisher extends React::Subject {
     has $!_observer_subcription_map = {};
 
-    submethod build_producer {
+    method build_producer {
         return sub {
             my $observer = shift;
 

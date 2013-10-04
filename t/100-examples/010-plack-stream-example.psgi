@@ -53,11 +53,11 @@ class PlackObservableNumberStream extends React::Observable {
 
     has $!subscription;
 
-    submethod _init_subscription ($w) {
+    method _init_subscription ($w) {
         $!subscription = ReactX::AnyEvent::Subscription::Watcher->new( watcher => $w );
     }
 
-    submethod unsubscribe { $!subscription->unsubscribe }
+    method unsubscribe { $!subscription->unsubscribe }
 }
 
 sub {

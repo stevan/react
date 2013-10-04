@@ -7,7 +7,7 @@ class Debug with React::Observer {
 
     has $!name is ro;
 
-    submethod BUILD {
+    method BUILD {
         warn '>>>' . $!name . " started subscribing\n";
     }
 

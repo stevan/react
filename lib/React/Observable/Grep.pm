@@ -9,7 +9,7 @@ class Grep extends React::Observable {
     has $!sequence = die '$!sequence is required';
     has $!f        = die '$!f is required';
 
-    submethod build_producer {
+    method build_producer {
         return sub {
             my $observer = shift;
             $!sequence->subscribe(

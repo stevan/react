@@ -10,7 +10,7 @@ use React::Subscription::Callback;
 class Concat extends React::Observable {
     has $!observables = die '$!observables is required';
 
-    submethod build_producer {
+    method build_producer {
         return sub {
             my $observer    = shift;
             my @observables = @{ $!observables };

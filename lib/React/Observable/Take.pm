@@ -10,7 +10,7 @@ class Take extends React::Observable {
     has $!sequence = die '$!sequence is required';;
     has $!n        = die '$!n is required';;
 
-    submethod build_producer {
+    method build_producer {
         return sub {
             my $observer = shift;
             my $counter  = 0;
