@@ -25,11 +25,28 @@ class Observable {
         return React::Subscription::Empty->new;
     }
 
+    # instance methods
+
     method take ( $n ) { use_module('React::Observable::Take')->new( sequence => $self, n => $n ) }
     method map  ( $f ) { use_module('React::Observable::Map' )->new( sequence => $self, f => $f ) }
     method grep ( $f ) { use_module('React::Observable::Grep')->new( sequence => $self, f => $f ) }
 
-    method concat { use_module('React::Observable::Concat')->new( observables => [ $self, @_ ] ) }
+    # class methods
+
+    method from ($class: @values) { use_module('React::Observable::From')->new( values => \@values ) }
+
+    # class or instance method
+
+    method concat {
+        use_module('React::Observable::Concat')->new(
+            observables => [ (blessed $self ? $self : ()), @_ ]
+        )
+    }
+
+    # these can be useful, they don't do much
+    method empty ($class:)    { React::Observerable->new( producer => sub { $_[0]->on_completed   } ) }
+    method error ($class: $e) { React::Observerable->new( producer => sub { $_[0]->on_error( $e ) } ) }
+    method never ($class:)    { React::Observerable->new( producer => sub {                       } ) }
 }
 
 __END__
