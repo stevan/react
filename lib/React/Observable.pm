@@ -43,6 +43,12 @@ class Observable {
         )
     }
 
+    method materialize {
+        use_module('React::Observable::Materialize')->new(
+            sequence => (blessed $self ? $self : $_[0])
+        )
+    }
+
     # these can be useful, they don't do much
     method empty ($class:)    { React::Observerable->new( producer => sub { $_[0]->on_completed   } ) }
     method error ($class: $e) { React::Observerable->new( producer => sub { $_[0]->on_error( $e ) } ) }
