@@ -47,7 +47,7 @@ ok($s->does('React::Subscription'), '... this object does React::Subscription');
 
 ok(!$s->is_unsubscribed, '... we are not yet unsubscribed');
 
-my $w1 = AnyEvent->timer(after => 1, cb => sub {
+my $w1 = AnyEvent->timer(after => 0.2, cb => sub {
     ok(!$s->is_unsubscribed, '... we are (still) not yet unsubscribed');
 });
 
