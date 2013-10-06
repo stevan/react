@@ -4,7 +4,7 @@ use strict;
 use warnings;
 use mop;
 
-use Test::More;
+use Test::More tests => 16;
 
 use React;
 use Test::React::Observer::Recorder;
@@ -64,15 +64,23 @@ ok($r1->does('React::Observer'), '... this object does React::Observer');
 my $s1 = $c->subscribe( $r1 );
 ok($s1->does('React::Subscription'), '... this object does React::Subscription');
 
+ok(!$s1->is_unsubscribed, '... we are not yet unsubscribed');
+
+my $w1 = AnyEvent->timer(after => 1, cb => sub {
+    ok(!$s1->is_unsubscribed, '... we are (still) not yet unsubscribed (after 1 second)');
+});
+
 diag "pause for approx. 3 seconds ...";
 
 my ($s2, $r2);
 
-my $w1 = AnyEvent->timer(after => 3, cb => sub {
+my $w2 = AnyEvent->timer(after => 3, cb => sub {
     is_deeply( $r1->values, [ 0 .. 20 ], '... got the expected values');
     ok($r1->is_completed, '... and we have been completed');
 
+    ok(!$s1->is_unsubscribed, '... we are (still) not yet unsubscribed (after 3 seconds)');
     $s1->unsubscribe;
+    ok($s1->is_unsubscribed, '... we are now unsubscribed');
 
     $r2 = Test::React::Observer::Recorder->new;
     ok($r2->does('React::Observer'), '... this object does React::Observer');
@@ -80,10 +88,16 @@ my $w1 = AnyEvent->timer(after => 3, cb => sub {
     $s2 = $c->subscribe( $r2 );
     ok($s2->does('React::Subscription'), '... this object does React::Subscription');
 
+    ok(!$s2->is_unsubscribed, '... we are not yet unsubscribed');
+
     diag "pause again for another 3 seconds ...";
 });
 
-my $w2 = AnyEvent->timer(after => 6, cb => sub {
+my $w3 = AnyEvent->timer(after => 4, cb => sub {
+    ok(!$s2->is_unsubscribed, '... we are (still) not yet unsubscribed');
+});
+
+my $w4 = AnyEvent->timer(after => 6, cb => sub {
     is_deeply( $r2->values, [ 0 .. 20 ], '... got the expected values');
     ok($r2->is_completed, '... and we have been completed');
     $s2->unsubscribe;
@@ -92,5 +106,5 @@ my $w2 = AnyEvent->timer(after => 6, cb => sub {
 
 $cv->recv;
 
-done_testing;
+1;
 
