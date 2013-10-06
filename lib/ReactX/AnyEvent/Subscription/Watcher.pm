@@ -6,7 +6,9 @@ use mop;
 class Watcher with React::Subscription {
     has $!watcher;
 
-    method unsubscribe { undef $!watcher }
+    method watch ($w)      { $!watcher = $w; $self }
+    method unsubscribe     { $!watcher = undef     }
+    method is_unsubscribed { not defined $!watcher }
 }
 
 __END__
