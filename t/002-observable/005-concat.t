@@ -27,36 +27,15 @@ my $o2 = React::Observable->new(
 );
 isa_ok($o2, 'React::Observable');
 
-{
-    my $m = $o1->concat($o2);
+foreach my $m ( $o1->concat($o2), React::Observable->concat($o1, $o2) ) {
+    my $r = Test::React::Observer::Recorder->new;
+    ok($r->does('React::Observer'), '... this object does React::Observer');
 
-    {
-        my $r = Test::React::Observer::Recorder->new;
-        ok($r->does('React::Observer'), '... this object does React::Observer');
+    my $s = $m->subscribe( $r );
+    ok($s->does('React::Subscription'), '... this object does React::Subscription');
 
-        my $s = $m->subscribe( $r );
-        ok($s->does('React::Subscription'), '... this object does React::Subscription');
-
-        is_deeply( $r->values, [ 0 .. 20 ], '... got the expected values');
-        ok($r->is_completed, '... and we have been completed');
-    }
+    is_deeply( $r->values, [ 0 .. 20 ], '... got the expected values');
+    ok($r->is_completed, '... and we have been completed');
 }
-
-# test it as a class method too ...
-{
-    my $m = React::Observable->concat($o1, $o2);
-
-    {
-        my $r = Test::React::Observer::Recorder->new;
-        ok($r->does('React::Observer'), '... this object does React::Observer');
-
-        my $s = $m->subscribe( $r );
-        ok($s->does('React::Subscription'), '... this object does React::Subscription');
-
-        is_deeply( $r->values, [ 0 .. 20 ], '... got the expected values');
-        ok($r->is_completed, '... and we have been completed');
-    }
-}
-
 
 done_testing;
