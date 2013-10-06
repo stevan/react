@@ -5,6 +5,7 @@ use mop;
 
 role Subscription {
     method unsubscribe;
+    method is_unsubscribed;
 }
 
 __END__

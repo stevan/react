@@ -4,7 +4,8 @@ use warnings;
 use mop;
 
 class Empty with React::Subscription {
-    method unsubscribe {}
+    method unsubscribe     {   }
+    method is_unsubscribed { 1 }
 }
 
 __END__

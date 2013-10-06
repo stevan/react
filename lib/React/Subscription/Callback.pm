@@ -5,8 +5,14 @@ use mop;
 
 class Callback with React::Subscription {
     has $!cb;
+    has $!unsubscribed = 0;
 
-    method unsubscribe { $!cb->() }
+    method unsubscribe {
+        $!unsubscribed++;
+        $!cb->();
+    }
+
+    method is_unsubscribed { $!unsubscribed }
 }
 
 __END__

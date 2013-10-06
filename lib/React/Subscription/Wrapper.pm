@@ -15,6 +15,18 @@ class Wrapper with React::Subscription {
         $!actual->unsubscribe
             if defined $!actual;
     }
+
+    method is_unsubscribed {
+        return $!actual->is_unsubscribed
+            if defined $!actual;
+        # NOTE:
+        # if we don't have one, we
+        # clearly are not subscribed
+        # and therefore we are
+        # unsubscribed
+        # - SL
+        1;
+    }
 }
 
 __END__
