@@ -5,7 +5,7 @@ use mop;
 
 class Simple with React::Observer {
 
-    has $!on_next      = die '$!on_next is required';
+    has $!on_next is required;
     has $!on_completed = sub {};
     has $!on_error     = sub {};
 

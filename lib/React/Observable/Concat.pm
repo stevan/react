@@ -8,7 +8,7 @@ use React::Subscription::Wrapper;
 use React::Subscription::Callback;
 
 class Concat extends React::Observable {
-    has $!observables = die '$!observables is required';
+    has $!observables is required;
 
     method build_producer {
         return sub {

@@ -7,8 +7,8 @@ use React::Observer::Simple;
 use React::Subscription::Wrapper;
 
 class Take extends React::Observable {
-    has $!sequence = die '$!sequence is required';
-    has $!n        = die '$!n is required';
+    has $!sequence is required;
+    has $!n        is required;
 
     method build_producer {
         return sub {

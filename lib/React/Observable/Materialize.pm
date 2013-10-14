@@ -7,7 +7,7 @@ use React::Notification;
 use React::Observer::Simple;
 
 class Materialize extends React::Observable {
-    has $!sequence = die '$!sequence is required';
+    has $!sequence is required;
 
     method build_producer {
         return sub {

@@ -6,8 +6,8 @@ use mop;
 use React::Observer::Simple;
 
 class Grep extends React::Observable {
-    has $!sequence = die '$!sequence is required';
-    has $!f        = die '$!f is required';
+    has $!sequence is required;
+    has $!f        is required;
 
     method build_producer {
         return sub {
