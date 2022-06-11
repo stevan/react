@@ -1,23 +1,31 @@
-package Test::React::Observer;
-use v5.16;
+package Test::React::Observer::Recorder;
+use v5.24;
 use warnings;
-use mop;
+use experimental 'signatures', 'postderef';
 
-class Recorder with React::Observer {
-    has $!values       is ro = [];
-    has $!errors       is ro = [];
-    has $!is_completed is ro = 0;
+use parent 'UNIVERSAL::Object';
+use roles  'React::Observer';
+use slots (
+    values       => sub { [] },
+    errors       => sub { [] },
+    is_completed => sub { 0 },
+);
 
-    method on_next ($val) {
-        push @{ $!values } => $val;
-    }
+sub values       ($self) { $self->{values}       }
+sub errors       ($self) { $self->{errors}       }
+sub is_completed ($self) { $self->{is_completed} }
 
-    method on_completed { $!is_completed = 1 }
-
-    method on_error ($e) {
-        push @{ $!errors } => $e;
-    }
+sub on_next ($self, $val) {
+    push $self->{values}->@* => $val;
 }
+
+sub on_completed ($self) { $self->{is_completed} = 1 }
+
+sub on_error ($self, $e) {
+    push $self->{errors}->@* => $e;
+}
+
+1;
 
 __END__
 

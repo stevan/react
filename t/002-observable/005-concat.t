@@ -1,8 +1,8 @@
 #!perl
 
-use strict;
+use v5.24;
 use warnings;
-use mop;
+use experimental 'signatures', 'postderef';
 
 use Test::More;
 
@@ -29,10 +29,10 @@ isa_ok($o2, 'React::Observable');
 
 foreach my $m ( $o1->concat($o2), React::Observable->concat($o1, $o2) ) {
     my $r = Test::React::Observer::Recorder->new;
-    ok($r->does('React::Observer'), '... this object does React::Observer');
+    ok($r->roles::DOES('React::Observer'), '... this object does React::Observer');
 
     my $s = $m->subscribe( $r );
-    ok($s->does('React::Subscription'), '... this object does React::Subscription');
+    ok($s->roles::DOES('React::Subscription'), '... this object does React::Subscription');
 
     is_deeply( $r->values, [ 0 .. 20 ], '... got the expected values');
     ok($r->is_completed, '... and we have been completed');

@@ -22,7 +22,7 @@ use AnyEvent;
     };
 
     isa_ok($s, 'ReactX::AnyEvent::Subscription::Watcher');
-    ok($s->does('React::Subscription'), '... this does React::Subscription');
+    ok($s->roles::DOES('React::Subscription'), '... this does React::Subscription');
 
     ok(!$s->is_unsubscribed, '... this is not yet unsubscribed');
     $s->unsubscribe;
@@ -50,7 +50,7 @@ use AnyEvent;
     };
 
     isa_ok($s, 'ReactX::AnyEvent::Subscription::Watcher');
-    ok($s->does('React::Subscription'), '... this does React::Subscription');
+    ok($s->roles::DOES('React::Subscription'), '... this does React::Subscription');
 
     ok(!$s->is_unsubscribed, '... this is not yet unsubscribed');
 

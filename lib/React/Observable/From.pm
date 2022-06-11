@@ -1,21 +1,23 @@
-package React::Observable;
-use v5.16;
+package React::Observable::From;
+use v5.24;
 use warnings;
-use mop;
+use experimental 'signatures', 'postderef';
 
-class From extends React::Observable {
-    has $!values = [];
+use parent 'React::Observable';
+use slots (
+    values => sub { +[] },
+);
 
-    method build_producer {
-        my @values = @{ $!values };
-        return sub {
-            my $observer = shift;
-            $observer->on_next( $_ ) for @values;
-            $observer->on_completed;
-        }
+sub build_producer ($self) {
+    my @values = $self->{values}->@*;
+    return sub {
+        my $observer = shift;
+        $observer->on_next( $_ ) for @values;
+        $observer->on_completed;
     }
-
 }
+
+1;
 
 __END__
 

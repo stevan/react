@@ -1,19 +1,23 @@
-package React::Subscription;
-use v5.16;
+package React::Subscription::Callback;
+use v5.24;
 use warnings;
-use mop;
+use experimental 'signatures', 'postderef';
 
-class Callback with React::Subscription {
-    has $!cb;
-    has $!unsubscribed = 0;
+use parent 'UNIVERSAL::Object';
+use roles  'React::Subscription';
+use slots (
+    cb           => sub {},
+    unsubscribed => sub { 0 },
+);
 
-    method unsubscribe {
-        $!unsubscribed++;
-        $!cb->();
-    }
-
-    method is_unsubscribed { $!unsubscribed }
+sub unsubscribe ($self) {
+    $self->{unsubscribed}++;
+    $self->{cb}->();
 }
+
+sub is_unsubscribed ($self) { $self->{unsubscribed} }
+
+1;
 
 __END__
 

@@ -1,8 +1,8 @@
 #!perl
 
-use strict;
+use v5.24;
 use warnings;
-use mop;
+use experimental 'signatures', 'postderef';
 
 use Test::More tests => 16;
 
@@ -59,10 +59,10 @@ isa_ok($o2, 'React::Observable');
 my $c = $o1->concat( $o2 );
 
 my $r1 = Test::React::Observer::Recorder->new;
-ok($r1->does('React::Observer'), '... this object does React::Observer');
+ok($r1->roles::DOES('React::Observer'), '... this object does React::Observer');
 
 my $s1 = $c->subscribe( $r1 );
-ok($s1->does('React::Subscription'), '... this object does React::Subscription');
+ok($s1->roles::DOES('React::Subscription'), '... this object does React::Subscription');
 
 ok(!$s1->is_unsubscribed, '... we are not yet unsubscribed');
 
@@ -83,10 +83,10 @@ my $w2 = AnyEvent->timer(after => 3, cb => sub {
     ok($s1->is_unsubscribed, '... we are now unsubscribed');
 
     $r2 = Test::React::Observer::Recorder->new;
-    ok($r2->does('React::Observer'), '... this object does React::Observer');
+    ok($r2->roles::DOES('React::Observer'), '... this object does React::Observer');
 
     $s2 = $c->subscribe( $r2 );
-    ok($s2->does('React::Subscription'), '... this object does React::Subscription');
+    ok($s2->roles::DOES('React::Subscription'), '... this object does React::Subscription');
 
     ok(!$s2->is_unsubscribed, '... we are not yet unsubscribed');
 

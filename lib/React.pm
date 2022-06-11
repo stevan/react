@@ -1,6 +1,7 @@
 package React;
-use v5.16;
+use v5.24;
 use warnings;
+use experimental 'signatures', 'postderef';
 
 use React::Observable;
 use React::Observer;

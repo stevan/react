@@ -1,15 +1,19 @@
-package ReactX::AnyEvent::Subscription;
-use v5.16;
+package ReactX::AnyEvent::Subscription::Watcher;
+use v5.24;
 use warnings;
-use mop;
+use experimental 'signatures', 'postderef';
 
-class Watcher with React::Subscription {
-    has $!watcher;
+use parent 'UNIVERSAL::Object';
+use roles  'React::Subscription';
+use slots (
+    watcher => sub {},
+);
 
-    method watch ($w)      { $!watcher = $w; $self }
-    method unsubscribe     { $!watcher = undef     }
-    method is_unsubscribed { not defined $!watcher }
-}
+sub watch           ($self, $w) { $self->{watcher} = $w; $self }
+sub unsubscribe     ($self)     { $self->{watcher} = undef     }
+sub is_unsubscribed ($self)     { not defined $self->{watcher} }
+
+1;
 
 __END__
 

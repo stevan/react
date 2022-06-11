@@ -1,18 +1,21 @@
-package React::Observer;
-use v5.16;
+package React::Observer::Simple;
+use v5.24;
 use warnings;
-use mop;
+use experimental 'signatures', 'postderef';
 
-class Simple with React::Observer {
+use parent 'UNIVERSAL::Object';
+use roles  'React::Observer';
+use slots (
+    on_next      => sub { die '`on_next` is required' },
+    on_completed => sub {},
+    on_error     => sub {},
+);
 
-    has $!on_next is required;
-    has $!on_completed = sub {};
-    has $!on_error     = sub {};
+sub on_next      ($self, $val) { $self->{on_next}->( $val ) }
+sub on_completed ($self)       { $self->{on_completed}->()  }
+sub on_error     ($self, $e)   { $self->{on_error}->( $e )  }
 
-    method on_next ($val) { $!on_next->( $val ) }
-    method on_completed   { $!on_completed->()  }
-    method on_error ($e)  { $!on_error->( $e )  }
-}
+1;
 
 __END__
 

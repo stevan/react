@@ -1,9 +1,17 @@
-package React;
-use v5.16;
+package React::Subject;
+use v5.24;
 use warnings;
-use mop;
+use experimental 'signatures', 'postderef';
 
-class Subject extends React::Observable with React::Observer is abstract {}
+use parent 'React::Observable';
+use roles  'React::Observer';
+use slots;
+
+sub on_completed;
+sub on_error;
+sub on_next;
+
+1;
 
 __END__
 

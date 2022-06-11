@@ -1,28 +1,33 @@
-package React::Observer;
-use v5.16;
+package React::Observer::Debug;
+use v5.24;
 use warnings;
-use mop;
+use experimental 'signatures', 'postderef';
 
-class Debug with React::Observer {
+use parent 'UNIVERSAL::Object';
+use roles  'React::Observer';
+use slots (
+    name => sub {},
+);
 
-    has $!name is ro;
-
-    method BUILD {
-        warn '>>>' . $!name . " started subscribing\n";
-    }
-
-    method on_completed {
-        warn $!name . " COMPLETED\n";
-    }
-
-    method on_error ($exception) {
-        warn $!name . " GOT ERROR: $exception\n";
-    }
-
-    method on_next ($value) {
-        warn $!name . " GOT VALUE: $value\n";
-    }
+sub BUILD ($self, $) {
+    warn '>>>' . $self->{name} . " started subscribing\n";
 }
+
+sub name ($self) { $self->{name} }
+
+sub on_completed ($self) {
+    warn $self->{name} . " COMPLETED\n";
+}
+
+sub on_error ($self, $exception) {
+    warn $self->{name} . " GOT ERROR: $exception\n";
+}
+
+sub on_next ($self, $value) {
+    warn $self->{name} . " GOT VALUE: $value\n";
+}
+
+1;
 
 __END__
 

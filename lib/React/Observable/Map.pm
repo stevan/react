@@ -1,30 +1,33 @@
-package React::Observable;
-use v5.16;
+package React::Observable::Map;
+use v5.24;
 use warnings;
-use mop;
+use experimental 'signatures', 'postderef';
 
 use React::Observer::Simple;
 
-class Map extends React::Observable {
-    has $!sequence is required;
-    has $!f        is required;
+use parent 'React::Observable';
+use slots (
+    sequence => sub {},
+    f        => sub {},
+);
 
-    method build_producer {
-        return sub {
-            my $observer = shift;
-            $!sequence->subscribe(
-                React::Observer::Simple->new(
-                    on_completed => sub { $observer->on_completed      },
-                    on_error     => sub { $observer->on_error( $_[0] ) },
-                    on_next      => sub {
-                        local $_ = $_[0];
-                        $observer->on_next( $!f->( $_[0] ) )
-                    },
-                )
+sub build_producer ($self) {
+    return sub {
+        my $observer = shift;
+        $self->{sequence}->subscribe(
+            React::Observer::Simple->new(
+                on_completed => sub { $observer->on_completed      },
+                on_error     => sub ($e) { $observer->on_error( $e ) },
+                on_next      => sub ($val) {
+                    local $_ = $val;
+                    $observer->on_next( $self->{f}->( $val ) )
+                },
             )
-        }
+        )
     }
 }
+
+1;
 
 __END__
 

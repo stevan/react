@@ -1,8 +1,8 @@
 #!perl
 
-use strict;
+use v5.24;
 use warnings;
-use mop;
+use experimental 'signatures', 'postderef';
 
 use Test::More;
 
@@ -22,10 +22,10 @@ my $m = $o->map(sub { "value: $_" });
 
 {
     my $r = Test::React::Observer::Recorder->new;
-    ok($r->does('React::Observer'), '... this object does React::Observer');
+    ok($r->roles::DOES('React::Observer'), '... this object does React::Observer');
 
     my $s = $m->subscribe( $r );
-    ok($s->does('React::Subscription'), '... this object does React::Subscription');
+    ok($s->roles::DOES('React::Subscription'), '... this object does React::Subscription');
 
     is_deeply( $r->values, [ map { "value: $_" } 0 .. 10 ], '... got the expected values');
     ok($r->is_completed, '... and we have been completed');
@@ -33,10 +33,10 @@ my $m = $o->map(sub { "value: $_" });
 
 {
     my $r = Test::React::Observer::Recorder->new;
-    ok($r->does('React::Observer'), '... this object does React::Observer');
+    ok($r->roles::DOES('React::Observer'), '... this object does React::Observer');
 
     my $s = $o->subscribe( $r );
-    ok($s->does('React::Subscription'), '... this object does React::Subscription');
+    ok($s->roles::DOES('React::Subscription'), '... this object does React::Subscription');
 
     is_deeply( $r->values, [ 0 .. 10 ], '... got the expected values from the original obseverable');
     ok($r->is_completed, '... and we have been completed');

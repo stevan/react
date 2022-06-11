@@ -1,41 +1,44 @@
-package React::Observable;
-use v5.16;
+package React::Observable::Take;
+use v5.24;
 use warnings;
-use mop;
+use experimental 'signatures', 'postderef';
 
 use React::Observer::Simple;
 use React::Subscription::Wrapper;
 
-class Take extends React::Observable {
-    has $!sequence is required;
-    has $!n        is required;
+use parent 'React::Observable';
+use slots (
+    sequence => sub {},
+    n        => sub {},
+);
 
-    method build_producer {
-        return sub {
-            my $observer = shift;
-            my $counter  = 0;
+sub build_producer ($self) {
+    return sub {
+        my $observer = shift;
+        my $counter  = 0;
 
-            my $take_subscription = React::Subscription::Wrapper->new;
-            my $take_observer     = React::Observer::Simple->new(
-                on_completed => sub { $observer->on_completed      if $counter < $!n },
-                on_error     => sub { $observer->on_error( $_[0] ) if $counter < $!n },
-                on_next      => sub {
-                    $counter++;
-                    if ( $counter <= $!n ) {
-                        $observer->on_next( $_[0] );
-                        if ( $counter == $!n ) {
-                            $observer->on_completed;
-                        }
+        my $take_subscription = React::Subscription::Wrapper->new;
+        my $take_observer     = React::Observer::Simple->new(
+            on_completed => sub      { $observer->on_completed   if $counter < $self->{n} },
+            on_error     => sub ($e) { $observer->on_error( $e ) if $counter < $self->{n} },
+            on_next      => sub ($val) {
+                $counter++;
+                if ( $counter <= $self->{n} ) {
+                    $observer->on_next( $val );
+                    if ( $counter == $self->{n} ) {
+                        $observer->on_completed;
                     }
-                    if ( $counter >= $!n ) {
-                        $take_subscription->unsubscribe;
-                    }
-                },
-            );
-            $take_subscription->wrap( $!sequence->subscribe( $take_observer ) );
-        }
+                }
+                if ( $counter >= $self->{n} ) {
+                    $take_subscription->unsubscribe;
+                }
+            },
+        );
+        $take_subscription->wrap( $self->{sequence}->subscribe( $take_observer ) );
     }
 }
+
+1;
 
 __END__
 

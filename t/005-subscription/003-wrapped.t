@@ -17,7 +17,7 @@ use React::Subscription::Callback;
     );
 
     isa_ok($s, 'React::Subscription::Wrapper');
-    ok($s->does('React::Subscription'), '... this does React::Subscription');
+    ok($s->roles::DOES('React::Subscription'), '... this does React::Subscription');
 
     ok($s->is_unsubscribed, '... this is unsubscribed');
 }
@@ -31,7 +31,7 @@ use React::Subscription::Callback;
     );
 
     isa_ok($s, 'React::Subscription::Wrapper');
-    ok($s->does('React::Subscription'), '... this does React::Subscription');
+    ok($s->roles::DOES('React::Subscription'), '... this does React::Subscription');
 
     ok(!$s->is_unsubscribed, '... this is not yet unsubscribed');
 

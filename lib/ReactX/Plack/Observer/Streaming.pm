@@ -1,21 +1,25 @@
-package ReactX::Plack::Observer;
-use v5.16;
+package ReactX::Plack::Observer::Streaming;
+use v5.24;
 use warnings;
-use mop;
+use experimental 'signatures', 'postderef';
 
-class Streaming with React::Observer {
-    has $!writer;
-    has $!error_msg = "Error: %s";
+use parent 'UNIVERSAL::Object';
+use roles  'React::Observer';
+use slots (
+    writer    => sub {},
+    error_msg => sub { "Error: %s" };
+);
 
-    method on_next ($val) { $!writer->write( $val ); }
+sub on_next ($self, $val) { $self->{writer}->write( $val ); }
 
-    method on_completed { $!writer->close }
+sub on_completed ($self) { $self->{writer}->close }
 
-    method on_error ($e) {
-        $!writer->write( sprintf $!error_msg, $e );
-        $!writer->close;
-    }
+sub on_error ($self, $e) {
+    $self->{writer}->write( sprintf $!error_msg, $e );
+    $self->{writer}->close;
 }
+
+1;
 
 __END__
 

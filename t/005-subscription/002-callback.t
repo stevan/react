@@ -16,7 +16,7 @@ my $s = React::Subscription::Callback->new(
 );
 
 isa_ok($s, 'React::Subscription::Callback');
-ok($s->does('React::Subscription'), '... this does React::Subscription');
+ok($s->roles::DOES('React::Subscription'), '... this does React::Subscription');
 
 ok(!$s->is_unsubscribed, '... this is not yet unsubscribed');
 

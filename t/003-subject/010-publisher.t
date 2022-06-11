@@ -1,8 +1,8 @@
 #!perl
 
-use strict;
+use v5.24;
 use warnings;
-use mop;
+use experimental 'signatures', 'postderef';
 
 use Test::More;
 
@@ -13,20 +13,20 @@ use Test::React::Observer::Recorder;
 my $p = React::Subject::Publisher->new;
 isa_ok($p, 'React::Subject');
 isa_ok($p, 'React::Observable');
-ok($p->does('React::Observer'), '... this object does React::Observer');
+ok($p->roles::DOES('React::Observer'), '... this object does React::Observer');
 
 my $r1 = Test::React::Observer::Recorder->new;
 my $r2 = Test::React::Observer::Recorder->new;
 my $r3 = Test::React::Observer::Recorder->new;
 
 my $s1 = $p->subscribe( $r1 );
-ok($s1->does('React::Subscription'), '... this is a React::Subscription');
+ok($s1->roles::DOES('React::Subscription'), '... this is a React::Subscription');
 
 $p->on_next(10);
 $p->on_next(20);
 
 my $s2 = $p->subscribe( $r2 );
-ok($s2->does('React::Subscription'), '... this is a React::Subscription');
+ok($s2->roles::DOES('React::Subscription'), '... this is a React::Subscription');
 
 $p->on_next(30);
 $p->on_next(40);
@@ -52,7 +52,7 @@ is_deeply($r2->values, [ 30, 40, 50, 60 ], '... the second observer kept getting
 ok($r2->is_completed, '... the second observer is now completed');
 
 my $s3 = $p->subscribe( $r3 );
-ok($s3->does('React::Subscription'), '... this is a React::Subscription');
+ok($s3->roles::DOES('React::Subscription'), '... this is a React::Subscription');
 
 $p->on_next(70);
 $p->on_next(80);

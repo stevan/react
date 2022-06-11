@@ -1,12 +1,12 @@
-package React;
-use v5.16;
+package React::Subscription;
+use v5.24;
 use warnings;
-use mop;
+use experimental 'signatures', 'postderef';
 
-role Subscription {
-    method unsubscribe;
-    method is_unsubscribed;
-}
+sub unsubscribe;
+sub is_unsubscribed;
+
+1;
 
 __END__
 

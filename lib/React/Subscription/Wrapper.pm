@@ -1,33 +1,37 @@
-package React::Subscription;
-use v5.16;
+package React::Subscription::Wrapper;
+use v5.24;
 use warnings;
-use mop;
+use experimental 'signatures', 'postderef';
 
-class Wrapper with React::Subscription {
-    has $!actual;
+use parent 'UNIVERSAL::Object';
+use roles  'React::Subscription';
+use slots (
+    actual => sub {}
+);
 
-    method wrap ($actual) {
-        $!actual = $actual;
-        $self;
-    }
-
-    method unsubscribe {
-        $!actual->unsubscribe
-            if defined $!actual;
-    }
-
-    method is_unsubscribed {
-        return $!actual->is_unsubscribed
-            if defined $!actual;
-        # NOTE:
-        # if we don't have one, we
-        # clearly are not subscribed
-        # and therefore we are
-        # unsubscribed
-        # - SL
-        1;
-    }
+sub wrap ($self, $actual) {
+    $self->{actual} = $actual;
+    $self;
 }
+
+sub unsubscribe ($self) {
+    $self->{actual}->unsubscribe
+        if defined $self->{actual};
+}
+
+sub is_unsubscribed ($self) {
+    return $self->{actual}->is_unsubscribed
+        if defined $self->{actual};
+    # NOTE:
+    # if we don't have one, we
+    # clearly are not subscribed
+    # and therefore we are
+    # unsubscribed
+    # - SL
+    1;
+}
+
+1;
 
 __END__
 

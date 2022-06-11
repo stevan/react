@@ -1,8 +1,8 @@
 #!perl
 
-use strict;
+use v5.24;
 use warnings;
-use mop;
+use experimental 'signatures', 'postderef';
 
 use Test::More tests => 7;
 
@@ -40,10 +40,10 @@ isa_ok($o, 'React::Observable');
 my $g = $o->grep(sub { ($_ % 2) == 0 });
 
 my $r = Test::React::Observer::Recorder->new;
-ok($r->does('React::Observer'), '... this object does React::Observer');
+ok($r->roles::DOES('React::Observer'), '... this object does React::Observer');
 
 my $s = $g->subscribe( $r );
-ok($s->does('React::Subscription'), '... this object does React::Subscription');
+ok($s->roles::DOES('React::Subscription'), '... this object does React::Subscription');
 
 ok(!$s->is_unsubscribed, '... we are not yet unsubscribed');
 

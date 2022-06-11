@@ -1,12 +1,15 @@
-package React::Subscription;
-use v5.16;
+package React::Subscription::Empty;
+use v5.24;
 use warnings;
-use mop;
+use experimental 'signatures', 'postderef';
 
-class Empty with React::Subscription {
-    method unsubscribe     {   }
-    method is_unsubscribed { 1 }
-}
+use parent 'UNIVERSAL::Object';
+use roles  'React::Subscription';
+
+sub unsubscribe     ($self) {   }
+sub is_unsubscribed ($self) { 1 }
+
+1;
 
 __END__
 

@@ -1,18 +1,16 @@
 #!perl
 
-use strict;
+use v5.24;
 use warnings;
-use mop;
+use experimental 'signatures', 'postderef';
 
 use Test::More;
 
 use React;
 use Test::React::Observer::Recorder;
 
-ok(mop::meta('React::Observer')->isa('mop::role'), '... Observer is a role');
-
 my $o = Test::React::Observer::Recorder->new;
-ok($o->does('React::Observer'), '... the object does React::Observer role');
+ok($o->roles::DOES('React::Observer'), '... the object does React::Observer role');
 
 $o->on_next(10);
 $o->on_next(20);

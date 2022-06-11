@@ -1,13 +1,13 @@
-package React;
-use v5.16;
+package React::Observer;
+use v5.24;
 use warnings;
-use mop;
+use experimental 'signatures', 'postderef';
 
-role Observer {
-    method on_completed;
-    method on_error;
-    method on_next;
-}
+sub on_completed;
+sub on_error;
+sub on_next;
+
+1;
 
 __END__
 

@@ -1,8 +1,8 @@
 #!perl
 
-use strict;
+use v5.24;
 use warnings;
-use mop;
+use experimental 'signatures', 'postderef';
 
 use Test::More;
 
@@ -17,7 +17,7 @@ my $o = React::Observer::Simple->new(
     on_error     => sub { push @errors => shift },
 );
 isa_ok($o, 'React::Observer::Simple');
-ok($o->does('React::Observer'), '... the object does React::Observer role');
+ok($o->roles::DOES('React::Observer'), '... the object does React::Observer role');
 
 $o->on_next(10);
 $o->on_next(20);
